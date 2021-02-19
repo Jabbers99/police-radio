@@ -24,7 +24,7 @@ function RSRP.PoliceRadio.ToggleRadio(ply, bool)
     if not ply.PoliceRadio and not ply.PoliceRadioAudio then
         RSRP.PoliceRadio.ToggleAudio(ply, true)
     end
-    ply.PoliceRadio = (bool != nil and bool) or (!ply.PoliceRadio and true) or false
+    ply.PoliceRadio = (bool != nil and bool) or !ply.PoliceRadio
 
     net.Start("rsrp_policeradio_toggleradio")
         net.WriteBool(ply.PoliceRadio)
@@ -62,12 +62,9 @@ hook.Add("PlayerButtonDown", "rsrp_policeradio_toggle", function(ply, button)
 end)
 
 hook.Add("PlayerCanHearPlayersVoice", "rsrp_policeradio_globalvoice", function(listener, talker)
-    if listener:isCP() or listener:isMedic() or talker:isCP() or listener:isMedic() or RSRP.PoliceRadio.AllowedJobs[team.GetName(talker:Team())] or RSRP.PoliceRadio.AllowedJobs[team.GetName(listener:Team())] then
-        if listener.PoliceRadioAudio and talker.PoliceRadio and listener.PoliceRadioChannel == talker.PoliceRadioChannel then
-           return true, false
-        elseif listener.PoliceRadioAudio and talker.PoliceRadio and (listener:Team() == TEAM_DISPATCHER ) then
-           return true, false
-        elseif listener.PoliceRadioAudio and talker.PoliceRadio and (talker:Team() == TEAM_DISPATCHER ) then
+    if (listener:isCP() or listener:isMedic() or talker:isCP() or talker:isMedic() or RSRP.PoliceRadio.AllowedJobs[team.GetName(talker:Team())] or RSRP.PoliceRadio.AllowedJobs[team.GetName(listener:Team())])
+			and listener.PoliceRadioAudio and talker.PoliceRadio
+			and (listener.PoliceRadioChannel == talker.PoliceRadioChannel or listener:Team() == TEAM_DISPATCHER or talker:Team() == TEAM_DISPATCHER) then
             return true, false
         end
     end
@@ -77,7 +74,7 @@ hook.Add("OnPlayerChangedTeam", "rsrp_policeradio_onjobchange", function(ply, ol
 
 	if not GAMEMODE.CivilProtection[new] then
 		ply.PoliceRadioAudio 	= nil 
-		ply.PoliceRadio 		= nil
+		ply.PoliceRadio 	= nil
 	end
 
 end)
