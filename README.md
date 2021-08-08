@@ -1,3 +1,3 @@
 # Jabbers Radio
 
-A simple police radio for gmod
+A simple police radio for DarkRP on Garry's Mod.
